@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2026 辯論比賽 - 個人發言順序抽籤系統</title>
+    <title>2026 嘉義高中演辯社種子面試抽籤系統</title>
     <style>
         :root {
             --bg-body: #f8fafc;
@@ -300,7 +300,7 @@
 
 <div class="container">
     <div class="header-panel">
-        <h1 class="hero-title">辯論個人賽／個人發言順序抽籤程序</h1>
+        <h1 class="hero-title">嘉義高中演辯社種子抽籤程序</h1>
         <div class="hero-subtitle">
             <span>系統狀態：<strong style="color: var(--status-green);">準備就緒</strong></span>
             <span>執行時間：<span id="timestamp">2026-09-20 14:00</span></span>
@@ -464,7 +464,7 @@ function updateUI() {
         btnNext.disabled = false;
         btnNext.innerText = `抽取下一位順序 ( 第 ${currentStep + 1} 順位 )`;
     } else {
-        statusText.innerHTML = "🎉 所有 21 位參賽者發言順位已全部分配完畢！";
+        statusText.innerHTML = "🎉 21 位已全部分配完畢！";
         btnNext.disabled = true;
         btnNext.innerText = "抽籤完畢";
         btnAll.disabled = true;
@@ -476,7 +476,7 @@ function copyScheduleText() {
         if (!confirm("目前抽籤尚未完全結束，確定要複製已產生的部分結果嗎？")) return;
     }
     
-    let text = "📋【個人賽發言順序抽籤結果】\n";
+    let text = "📋【抽籤結果】\n";
     text += `執行時間：${document.getElementById('timestamp').innerText}\n\n`;
     
     for (let i = 0; i < TOTAL_SLOTS; i++) {
