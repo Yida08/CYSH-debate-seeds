@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2026 嘉義高中演辯社種子面試抽籤系統</title>
+    <title>五字種子面試順序 - 官方抽籤系統</title>
     <style>
         :root {
             --bg-body: #f8fafc;
@@ -290,8 +290,8 @@
 
 <nav class="top-nav">
     <div class="nav-brand">
-        個人賽順序抽籤
-        <span class="system-badge">共 21 位選手</span>
+        五字種子面試順序
+        <span class="system-badge">共 27 位面試者</span>
     </div>
     <div class="nav-actions">
         <button class="nav-btn" onclick="copyScheduleText()">複製結果</button>
@@ -300,10 +300,10 @@
 
 <div class="container">
     <div class="header-panel">
-        <h1 class="hero-title">嘉義高中演辯社種子抽籤程序</h1>
+        <h1 class="hero-title">五字種子面試順序抽籤程序</h1>
         <div class="hero-subtitle">
             <span>系統狀態：<strong style="color: var(--status-green);">準備就緒</strong></span>
-            <span>執行時間：<span id="timestamp">2026-09-20 14:00</span></span>
+            <span>執行時間：<span id="timestamp">2026-09-22 14:00</span></span>
         </div>
     </div>
 
@@ -315,23 +315,25 @@
         <button class="btn-primary" id="btnNext" onclick="triggerDrawEffect()">抽取下一位順序 ( 第 1 順位 )</button>
         <button class="btn-secondary" id="btnAll" onclick="drawAllSlots()">快速完成全開</button>
         <button class="btn-secondary" onclick="initSystem()">重新重置順序</button>
-        <button class="btn-secondary" onclick="window.print()">列印順序表</button>
+        <button class="btn-secondary" onclick="window.print()">列印面試順序表</button>
     </div>
 
     <div class="section-header">
-        ■ 官方抽籤順序表 (第 1 號 ~ 第 21 號)
+        ■ 官方面試順序表 (第 1 號 ~ 第 27 號)
     </div>
     
     <div id="matchList" class="card-grid"></div>
 </div>
 
 <script>
-// 21位參賽者名單
+// 27位面試者名單
 const ALL_TEAMS = [
     "游凱鈞", "郭品成", "賴柏翰", "江亦承", "張祐嘉",
     "陳彥蓁", "陳博瑜", "陳昱任", "陳威志", "謝亦程",
     "何柏融", "蔣昕竘", "簡士涵", "呂育叡", "邱妍廷",
-    "莊淯荃", "郭忠豪", "郭羿霆", "洪維廷", "李威霖", "蘇俊愷"
+    "莊淯荃", "郭忠豪", "郭羿霆", "洪維廷", "李威霖",
+    "蘇俊愷", "曾瑞騰", "吳宜峰", "黃柏縉", "陳昱彰",
+    "林宥禎", "吳嘉純"
 ];
 
 const TOTAL_SLOTS = ALL_TEAMS.length;
@@ -374,10 +376,10 @@ function initSystem() {
 function renderBoard() {
     let html = "";
 
-    // 分為上半場 (1~11號) 與 下半場 (12~21號)
+    // 分為上半場 (1~14號) 與 下半場 (15~27號)
     const groups = [
-        { title: "【上半場】第 01 ~ 11 順序位", count: 11, startIndex: 0 },
-        { title: "【下半場】第 12 ~ 21 順序位", count: 10, startIndex: 11 }
+        { title: "【上半場】第 01 ~ 14 面試順位", count: 14, startIndex: 0 },
+        { title: "【下半場】第 15 ~ 27 面試順位", count: 13, startIndex: 14 }
     ];
 
     groups.forEach(g => {
@@ -421,7 +423,7 @@ function triggerDrawEffect() {
         teamElem.innerText = `${randomTeam}`;
         counter++;
 
-        if (counter >= 6) { // 快速 0.45 秒揭曉
+        if (counter >= 6) { // 0.45 秒俐落揭曉
             clearInterval(rollInterval);
             finalizeSlot(currentStep);
             isRolling = false;
@@ -455,7 +457,7 @@ function updateUI() {
     const btnAll = document.getElementById('btnAll');
 
     if (currentStep === 0) {
-        statusText.innerText = "請點擊「抽取下一位順序」按鈕開始執行抽籤程序";
+        statusText.innerText = "請點擊「抽取下一位順序」按鈕開始執行面試抽籤程序";
         btnNext.disabled = false;
         btnNext.innerText = "抽取下一位順序 ( 第 1 順位 )";
         btnAll.disabled = false;
@@ -464,7 +466,7 @@ function updateUI() {
         btnNext.disabled = false;
         btnNext.innerText = `抽取下一位順序 ( 第 ${currentStep + 1} 順位 )`;
     } else {
-        statusText.innerHTML = "🎉 21 位已全部分配完畢！";
+        statusText.innerHTML = "🎉 所有 27 位五字種子面試順位已全部分配完畢！";
         btnNext.disabled = true;
         btnNext.innerText = "抽籤完畢";
         btnAll.disabled = true;
@@ -476,7 +478,7 @@ function copyScheduleText() {
         if (!confirm("目前抽籤尚未完全結束，確定要複製已產生的部分結果嗎？")) return;
     }
     
-    let text = "📋【抽籤結果】\n";
+    let text = "📋【五字種子面試順序抽籤結果】\n";
     text += `執行時間：${document.getElementById('timestamp').innerText}\n\n`;
     
     for (let i = 0; i < TOTAL_SLOTS; i++) {
@@ -486,7 +488,7 @@ function copyScheduleText() {
     }
     
     navigator.clipboard.writeText(text).then(() => {
-        alert("已成功將順序結果複製至剪貼簿！");
+        alert("已成功將五字種子面試順序結果複製至剪貼簿！");
     });
 }
 </script>
