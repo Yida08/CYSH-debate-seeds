@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>五字種子面試順序 - 官方抽籤系統</title>
+    <title>五字種子面試順序 - 下半場抽籤系統</title>
     <style>
         :root {
             --bg-body: #f8fafc;
@@ -198,10 +198,6 @@
             gap: 16px;
         }
 
-        @media (min-width: 768px) {
-            .card-grid { grid-template-columns: 1fr 1fr; }
-        }
-
         .group-card {
             background: var(--surface-white);
             border: 1px solid var(--border-color);
@@ -256,7 +252,7 @@
             border-radius: 4px;
             margin-right: 12px;
             flex-shrink: 0;
-            min-width: 55px;
+            min-width: 65px;
             text-align: center;
         }
 
@@ -281,7 +277,6 @@
             body { background: #fff; padding: 0; }
             .container { max-width: 100%; }
             .header-panel { border: none; padding: 0 0 20px 0; }
-            .card-grid { grid-template-columns: 1fr 1fr; }
             .group-card { border: 1px solid #000; box-shadow: none; }
         }
     </style>
@@ -291,7 +286,7 @@
 <nav class="top-nav">
     <div class="nav-brand">
         五字種子面試順序
-        <span class="system-badge">共 27 位面試者</span>
+        <span class="system-badge">下半場 共 13 位</span>
     </div>
     <div class="nav-actions">
         <button class="nav-btn" onclick="copyScheduleText()">複製結果</button>
@@ -300,7 +295,7 @@
 
 <div class="container">
     <div class="header-panel">
-        <h1 class="hero-title">五字種子面試順序抽籤程序</h1>
+        <h1 class="hero-title">五字種子面試順序抽籤程序 (下半場)</h1>
         <div class="hero-subtitle">
             <span>系統狀態：<strong style="color: var(--status-green);">準備就緒</strong></span>
             <span>執行時間：<span id="timestamp">2026-09-22 14:00</span></span>
@@ -312,31 +307,29 @@
     </div>
 
     <div class="control-panel">
-        <button class="btn-primary" id="btnNext" onclick="triggerDrawEffect()">抽取下一位順序 ( 第 1 順位 )</button>
+        <button class="btn-primary" id="btnNext" onclick="triggerDrawEffect()">抽取下一位順序 ( 第 15 順位 )</button>
         <button class="btn-secondary" id="btnAll" onclick="drawAllSlots()">快速完成全開</button>
         <button class="btn-secondary" onclick="initSystem()">重新重置順序</button>
-        <button class="btn-secondary" onclick="window.print()">列印面試順序表</button>
+        <button class="btn-secondary" onclick="window.print()">列印下半場順序表</button>
     </div>
 
     <div class="section-header">
-        ■ 官方面試順序表 (第 1 號 ~ 第 27 號)
+        ■ 官方面試順序表 (第 15 號 ~ 第 27 號)
     </div>
     
     <div id="matchList" class="card-grid"></div>
 </div>
 
 <script>
-// 27位面試者名單
-const ALL_TEAMS = [
-    "游凱鈞", "郭品成", "賴柏翰", "江亦承", "張祐嘉",
-    "陳彥蓁", "陳博瑜", "陳昱任", "陳威志", "謝亦程",
-    "何柏融", "蔣昕竘", "簡士涵", "呂育叡", "邱妍廷",
-    "莊淯荃", "郭忠豪", "郭羿霆", "洪維廷", "李威霖",
-    "蘇俊愷", "曾瑞騰", "吳宜峰", "黃柏縉", "陳昱彰",
-    "林宥禎", "吳嘉純"
+// 扣除上半場14位後，剩餘的 13 位面試者名單
+const REMAINING_TEAMS = [
+    "郭品成", "賴柏翰", "張祐嘉", "陳彥蓁", "陳昱任",
+    "呂育叡", "邱妍廷", "莊淯荃", "郭忠豪", "郭羿霆",
+    "洪維廷", "李威霖", "吳宜峰"
 ];
 
-const TOTAL_SLOTS = ALL_TEAMS.length;
+const TOTAL_SLOTS = REMAINING_TEAMS.length;
+const START_OFFSET = 15; // 從第 15 順位開始
 
 let generatedTeams = [];
 let currentStep = 0;
@@ -368,38 +361,29 @@ function shuffle(arr) {
 function initSystem() {
     currentStep = 0;
     isRolling = false;
-    generatedTeams = shuffle([...ALL_TEAMS]); // 完全隨機打亂
+    generatedTeams = shuffle([...REMAINING_TEAMS]); // 完全隨機打亂
     renderBoard();
     updateUI();
 }
 
 function renderBoard() {
-    let html = "";
-
-    // 分為上半場 (1~14號) 與 下半場 (15~27號)
-    const groups = [
-        { title: "【上半場】第 01 ~ 14 面試順位", count: 14, startIndex: 0 },
-        { title: "【下半場】第 15 ~ 27 面試順位", count: 13, startIndex: 14 }
-    ];
-
-    groups.forEach(g => {
-        html += `<div class="group-card">`;
-        html += `<div class="group-title">${g.title}</div>`;
-        html += `<div class="slot-list">`;
-        
-        for (let i = 0; i < g.count; i++) {
-            const slotIndex = g.startIndex + i;
-            html += `
-                <div class="slot-item" id="slot-${slotIndex}">
-                    <span class="slot-tag">第 ${slotIndex + 1} 順位</span>
-                    <span class="slot-team empty" id="team-${slotIndex}">等待抽籤...</span>
-                </div>
-            `;
-        }
-        
-        html += `</div></div>`;
-    });
-
+    let html = `
+        <div class="group-card">
+            <div class="group-title">【下半場】第 15 ~ 27 面試順位</div>
+            <div class="slot-list">
+    `;
+    
+    for (let i = 0; i < TOTAL_SLOTS; i++) {
+        const slotNumber = START_OFFSET + i;
+        html += `
+            <div class="slot-item" id="slot-${i}">
+                <span class="slot-tag">第 ${slotNumber} 順位</span>
+                <span class="slot-team empty" id="team-${i}">等待抽籤...</span>
+            </div>
+        `;
+    }
+    
+    html += `</div></div>`;
     document.getElementById('matchList').innerHTML = html;
 }
 
@@ -410,16 +394,17 @@ function triggerDrawEffect() {
     const btnNext = document.getElementById('btnNext');
     const slotElem = document.getElementById(`slot-${currentStep}`);
     const teamElem = document.getElementById(`team-${currentStep}`);
+    const currentSlotNum = START_OFFSET + currentStep;
 
     btnNext.disabled = true;
-    btnNext.innerText = `抽籤中 [ 第 ${currentStep + 1} 順位 ]...`;
+    btnNext.innerText = `抽籤中 [ 第 ${currentSlotNum} 順位 ]...`;
 
     slotElem.classList.add('rolling');
     teamElem.classList.remove('empty');
 
     let counter = 0;
     const rollInterval = setInterval(() => {
-        const randomTeam = ALL_TEAMS[Math.floor(Math.random() * ALL_TEAMS.length)];
+        const randomTeam = REMAINING_TEAMS[Math.floor(Math.random() * REMAINING_TEAMS.length)];
         teamElem.innerText = `${randomTeam}`;
         counter++;
 
@@ -457,16 +442,17 @@ function updateUI() {
     const btnAll = document.getElementById('btnAll');
 
     if (currentStep === 0) {
-        statusText.innerText = "請點擊「抽取下一位順序」按鈕開始執行面試抽籤程序";
+        statusText.innerText = "請點擊「抽取下一位順序」按鈕開始執行下半場抽籤";
         btnNext.disabled = false;
-        btnNext.innerText = "抽取下一位順序 ( 第 1 順位 )";
+        btnNext.innerText = "抽取下一位順序 ( 第 15 順位 )";
         btnAll.disabled = false;
     } else if (currentStep < TOTAL_SLOTS) {
-        statusText.innerHTML = `已完成 <strong>${currentStep} / ${TOTAL_SLOTS}</strong> 順位分配（下一位：<strong>第 ${currentStep + 1} 順位</strong>）`;
+        const nextSlotNum = START_OFFSET + currentStep;
+        statusText.innerHTML = `已完成下半場 <strong>${currentStep} / ${TOTAL_SLOTS}</strong> 位分配（下一位：<strong>第 ${nextSlotNum} 順位</strong>）`;
         btnNext.disabled = false;
-        btnNext.innerText = `抽取下一位順序 ( 第 ${currentStep + 1} 順位 )`;
+        btnNext.innerText = `抽取下一位順序 ( 第 ${nextSlotNum} 順位 )`;
     } else {
-        statusText.innerHTML = "🎉 所有 27 位五字種子面試順位已全部分配完畢！";
+        statusText.innerHTML = "🎉 所有 13 位下半場五字種子面試順位已全部分配完畢！";
         btnNext.disabled = true;
         btnNext.innerText = "抽籤完畢";
         btnAll.disabled = true;
@@ -478,17 +464,17 @@ function copyScheduleText() {
         if (!confirm("目前抽籤尚未完全結束，確定要複製已產生的部分結果嗎？")) return;
     }
     
-    let text = "📋【五字種子面試順序抽籤結果】\n";
+    let text = "📋【五字種子面試順序抽籤結果 - 下半場】\n";
     text += `執行時間：${document.getElementById('timestamp').innerText}\n\n`;
     
     for (let i = 0; i < TOTAL_SLOTS; i++) {
         const name = generatedTeams[i] || "未分配";
-        const numStr = String(i + 1).padStart(2, '0');
-        text += `第 ${numStr} 順序：${name}\n`;
+        const slotNumber = START_OFFSET + i;
+        text += `第 ${slotNumber} 順序：${name}\n`;
     }
     
     navigator.clipboard.writeText(text).then(() => {
-        alert("已成功將五字種子面試順序結果複製至剪貼簿！");
+        alert("已成功將下半場面試順序結果複製至剪貼簿！");
     });
 }
 </script>
